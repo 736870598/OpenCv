@@ -14,16 +14,11 @@ import com.sunxiaoyu.utils.UtilsCore;
 import com.sunxiaoyu.utils.core.model.ActivityResultInfo;
 import com.sunxiaoyu.utils.core.utils.StringUtils;
 import com.sunxy.detection.DetectionUtils;
-import com.sunxy.detection.ImageUtils;
 import com.sunxy.recognition.RecognitionUtils;
 import com.sunxy.sxyimagedetection.utils.BitmapUtils;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * SunXiaoYu on 2019/4/10.
@@ -73,7 +68,6 @@ public class FindIcCardActivity extends AppCompatActivity{
                             Bitmap bitmap = BitmapUtils.createBmp(FindIcCardActivity.this, path);
                             Bitmap template = BitmapFactory.decodeResource(getResources(), R.mipmap.te);
                             resultBmp = DetectionUtils.getTargetImg(bitmap, template, Bitmap.Config.ARGB_8888);
-//                            resultBmp = ImageUtils.delBitmapForOrc(bitmap);
                             if (bitmap != null && !bitmap.isRecycled()){
                                 bitmap.recycle();
                             }
@@ -87,34 +81,18 @@ public class FindIcCardActivity extends AppCompatActivity{
     }
 
     private void startFind(){
-        RecognitionUtils.init(this, new RecognitionUtils.OnInitListener() {
+        RecognitionUtils.init(this, resultBmp, new RecognitionUtils.OnInitListener() {
             @Override
-            public void startCopyAssert() {
+            public void startInit() {
                 progressDialog = new ProgressDialog(FindIcCardActivity.this);
                 progressDialog.setMessage("请稍候...");
                 progressDialog.show();
             }
 
             @Override
-            public void endCopyAssert() {
+            public void endInitAndRecognition(String result) {
                 dismissDialog();
-                Disposable disposable = Observable.just(resultBmp)
-                        .map(new Function<Bitmap, String>() {
-                            @Override
-                            public String apply(Bitmap bitmap) throws Exception {
-                                return RecognitionUtils.recognitionBmp(resultBmp);
-                            }
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<String>() {
-                            @Override
-                            public void accept(String s) throws Exception {
-                                startFind.setText(s);
-                            }
-                        });
-//                String cardStr = RecognitionUtils.recognitionBmp(resultBmp);
-//                startFind.setText(cardStr);
+                startFind.setText(result);
             }
         });
     }

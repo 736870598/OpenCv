@@ -10,19 +10,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="returnBmpActivity"
-        android:text="returnBmpActivity"/>
+        android:text="人脸识别"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="surfaceViewActivity"
-        android:text="surfaceViewActivity"/>
+        android:text="人脸识别"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="findIcCardActivity"
-        android:text="findIcCardActivity"/>
+        android:text="身份证识别"/>
 
 
 </LinearLayout>
